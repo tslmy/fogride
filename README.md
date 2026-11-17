@@ -3,7 +3,7 @@
 An iOS app that plans cycling loops through places you haven't uncovered in
 [Fog of World](https://fogofworld.app/en/) yet.
 
-Website: <https://tslmy.github.io/fogride/>
+Website: <https://fogride.myli.page/>
 
 <p>
   <img src="docs/img/routes.png" width="240" alt="A 20 km loop in Munich over a fogged map">
@@ -80,3 +80,7 @@ can differ from the line FogRide drew. GPX is the only exact handoff.
 
 The Debug configuration is compiled with optimization on, because route planning is roughly
 500 times slower without it.
+
+## License
+
+MIT. See [LICENSE](LICENSE). Road data © OpenStreetMap contributors, under the ODbL.

@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FogRide: bike loops through places you haven't been</title>
+<meta name="description" content="FogRide is an iOS app that reads your Fog of World map and plans cycling loops through the streets you haven't uncovered yet.">
+<meta property="og:title" content="FogRide">
+<meta property="og:description" content="Bike loops through the streets you haven't uncovered yet in Fog of World.">
+<meta property="og:image" content="https://tslmy.github.io/fogride/img/routes.png">
+<link rel="icon" href="img/icon.png">
+<style>
+  :root {
+    --bg: #f6f4ee;
+    --surface: #ffffff;
+    --text: #1b1e2b;
+    --muted: #5b6072;
+    --line: #dedbd0;
+    --accent: #5c40f2;
+    --fog-top: #48547a;
+    --fog-bottom: #181c34;
+    --on-fog: #f3f1ea;
+    --on-fog-muted: #c2c8dd;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #13162a;
+      --surface: #1c2038;
+      --text: #ecebf3;
+      --muted: #a4a9bf;
+      --line: #2e3350;
+      --accent: #9a86ff;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 17px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  a { color: var(--accent); }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+
+  header {
+    background: linear-gradient(180deg, var(--fog-top), var(--fog-bottom));
+    color: var(--on-fog);
+    padding: 56px 0 0;
+  }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .brand img { width: 56px; height: 56px; border-radius: 13px; }
+  .brand span { font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+  h1 {
+    font-size: clamp(34px, 6vw, 56px);
+    line-height: 1.08;
+    letter-spacing: -0.025em;
+    margin: 36px 0 16px;
+    max-width: 16ch;
+    text-wrap: balance;
+  }
+  .lede { font-size: 20px; color: var(--on-fog-muted); max-width: 56ch; margin: 0 0 28px; }
+  .buttons { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 48px; }
+  .button {
+    display: inline-block;
+    padding: 12px 22px;
+    border-radius: 999px;
+    font-weight: 600;
+    text-decoration: none;
+    background: var(--on-fog);
+    color: #1b1e2b;
+  }
+  .button.quiet { background: transparent; color: var(--on-fog); box-shadow: inset 0 0 0 1.5px rgba(243, 241, 234, 0.45); }
+  .button:focus-visible, a:focus-visible { outline: 3px solid #b9adff; outline-offset: 3px; }
+
+  .shots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; margin-bottom: -150px; }
+  .shots figure { margin: 0; }
+  .shots img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 34px;
+    border: 6px solid #0c0e1c;
+    box-shadow: 0 18px 40px rgba(8, 10, 24, 0.35);
+  }
+  .captions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; padding: 18px 0 8px; }
+  .captions p { margin: 0; font-size: 15px; color: var(--muted); }
+  .spacer { height: 150px; }
+
+  main section { padding: 48px 0; border-top: 1px solid var(--line); }
+  main section:first-of-type { border-top: 0; }
+  h2 { font-size: 28px; letter-spacing: -0.015em; margin: 0 0 20px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 20px; }
+  .card h3 { margin: 0 0 6px; font-size: 18px; }
+  .card p { margin: 0; color: var(--muted); font-size: 16px; }
+  ol.steps { padding-left: 1.3em; max-width: 70ch; }
+  ol.steps li { margin-bottom: 10px; }
+  .prose { max-width: 70ch; }
+  code { font: 0.92em ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 1px 5px; }
+  footer { padding: 32px 0 56px; color: var(--muted); font-size: 15px; border-top: 1px solid var(--line); }
+
+  @media (max-width: 720px) {
+    header { padding-top: 36px; }
+    .shots { grid-template-columns: 1fr; gap: 0; margin-bottom: -90px; }
+    .spacer { height: 90px !important; display: block !important; }
+    .shots figure:not(:first-child) { display: none; }
+    .shots img { max-width: 320px; margin: 0 auto; }
+    .captions { grid-template-columns: 1fr; gap: 10px; }
+    .captions p:not(:first-child) { display: none; }
+    .more { display: grid !important; }
+  }
+  .more { display: none; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .more img { width: 100%; height: auto; border-radius: 22px; border: 4px solid #0c0e1c; display: block; }
+  .more p { font-size: 14px; color: var(--muted); margin: 8px 0 0; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="brand">
+      <img src="img/icon.png" alt="" width="56" height="56">
+      <span>FogRide</span>
+    </div>
+    <h1>Bike loops through the streets you haven't uncovered.</h1>
+    <p class="lede">FogRide reads your <a href="https://fogofworld.app/en/" style="color:inherit">Fog of World</a> map and plans a ride that starts and ends where you are, through as much fog as it can find.</p>
+    <div class="buttons">
+      <a class="button" href="https://github.com/tslmy/fogride">Get the source on GitHub</a>
+      <a class="button quiet" href="#install">How to install</a>
+    </div>
+    <div class="shots">
+      <figure><img src="img/routes.png" width="603" height="1311" alt="FogRide showing a 20 km loop in Munich drawn over a fogged map, with cleared tracks in the old town and route cards listing distance, time, percent new and bike-lane share."></figure>
+      <figure><img src="img/fog.png" width="603" height="1311" alt="Close-up of the fog layer near Munich central station, with thin clear tracks where the rider has been before."></figure>
+      <figure><img src="img/alternative.png" width="603" height="1311" alt="A second candidate loop selected, heading south from central Munich."></figure>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="spacer"></div>
+  <div class="captions">
+    <p>A 20 km loop from central Munich. Purple is road still under fog; the white tracks are places already visited.</p>
+    <p>The fog layer is drawn straight from Fog of World's own data.</p>
+    <p>Several loops are offered each time, so you can pick a direction.</p>
+  </div>
+
+  <section class="more" aria-label="More screenshots">
+    <div><img src="img/fog.png" width="603" height="1311" alt="Close-up of the fog layer near Munich central station."><p>The fog layer, drawn from Fog of World's own data.</p></div>
+    <div><img src="img/alternative.png" width="603" height="1311" alt="A second candidate loop heading south."><p>Several loops are offered each time.</p></div>
+  </section>
+
+  <section>
+    <h2>What it does</h2>
+    <div class="grid">
+      <div class="card"><h3>Finds the fog</h3><p>Every road nearby is checked against your Fog of World map. Loops are steered toward the neighborhoods with the most road you haven't ridden.</p></div>
+      <div class="card"><h3>Brings you back</h3><p>Each route is a loop that ends where it starts. A slider sets the distance, from 5 to 40 km, and the loops update as you drag.</p></div>
+      <div class="card"><h3>Rides well</h3><p>Routes prefer bike lanes and paths, keep turns down, and avoid riding the same stretch twice.</p></div>
+      <div class="card"><h3>Tells you the cost</h3><p>Each loop shows its length, an estimated riding time, how much of it is new, how much is on bike infrastructure, and how many turns it has.</p></div>
+      <div class="card"><h3>Hands off to navigation</h3><p>Send the loop to Google Maps as via-points, step through it leg by leg in Apple Maps, or export a GPX track for Komoot, Ride with GPS and others.</p></div>
+      <div class="card"><h3>Stays on your phone</h3><p>Planning runs on the device. Your Fog of World data is only read, never changed and never uploaded.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>How routes are chosen</h2>
+    <div class="prose">
+      <p>Roads come from OpenStreetMap. Each road segment is mapped onto cells of about 23 m, and a cell counts as seen if any part of it is uncovered in Fog of World. A loop gets credit for each fogged cell once, so the two sides of a divided road don't count as new twice.</p>
+      <p>Candidate loops are built by placing a few waypoints around a circle through your start, pulled toward the foggiest areas, and joining them with paths that are cheap on fogged, bike-friendly roads and expensive on visited roads, busy roads, turns and repeats. The circle is resized until the loop matches the distance you asked for. The best few loops that differ from each other are shown.</p>
+    </div>
+  </section>
+
+  <section id="install">
+    <h2>How to install</h2>
+    <div class="prose">
+      <p>FogRide is not on the App Store. You build it yourself with Xcode, which is free, and run it on your own iPhone.</p>
+    </div>
+    <ol class="steps">
+      <li>Download the source from <a href="https://github.com/tslmy/fogride">GitHub</a> and open <code>FogRide.xcodeproj</code> in Xcode.</li>
+      <li>Select the FogRide target, open Signing &amp; Capabilities, and choose your team.</li>
+      <li>Plug in your iPhone, choose it as the run destination, and press Run.</li>
+      <li>In the app, tap <strong>Choose Sync Folder</strong> and pick the <code>Sync</code> folder that Fog of World keeps in iCloud Drive or Dropbox.</li>
+    </ol>
+    <div class="prose">
+      <p>The first time you use it in a new area, the app downloads the local road network, which takes about a minute. After that it plans in under a second.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Good to know</h2>
+    <div class="prose">
+      <p>Google Maps and Apple Maps only accept a list of stops, and each routes between them in its own way, so what they navigate can differ from the line FogRide drew. The GPX export is the only exact handoff.</p>
+      <p>FogRide is an independent hobby project. It is not affiliated with or endorsed by Fog of World or its maker, Ollix. It reads the sync files Fog of World stores in your own cloud folder; you need Fog of World, with sync turned on, for it to be useful.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    Road data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors. Map tiles in screenshots © Apple. Source on <a href="https://github.com/tslmy/fogride">GitHub</a>.
+  </div>
+</footer>
+
+</body>
+</html>
